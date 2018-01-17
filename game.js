@@ -13,8 +13,24 @@ var ant0 = new Ant("0");
 
 var para = document.createElement("P");
 para.id = "temp";
-var t = document.createTextNode("Ant0 is here: " + ant0.position);
-para.appendChild(t);
+para.appendChild(document.createTextNode("Ant0 is here: " + ant0.position));
 document.body.appendChild(para);
 
 tekst = document.getElementById("temp");
+tekst.innerHTML = "Ant0 is here: " + ant0.position;
+
+var print = function (what, where) {
+	var elem = document.getElementById(where);
+	elem.innerHTML = what;
+}
+
+var drawMap = function(map) {
+	string = "";
+	for (var i = 0; i < map.length; i++) {
+		for (var j = 0; j < map[i].lenth; j++) {
+			string += map[i][j];
+		};
+		string += "/n";
+	};
+	print(string, "temp");
+};
