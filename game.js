@@ -10,3 +10,8 @@ var Ant = function(name) {
   this.position = [0, 0];
 };
 var ant0 = new Ant("0");
+
+var para = document.createElement("P");
+var t = document.createTextNode("Ant0 is here: " + ant0.position);
+para.appendChild(t);
+document.body.appendChild(para);   
