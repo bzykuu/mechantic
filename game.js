@@ -33,7 +33,7 @@ var drawMap = function(map) {
 			string += map[i][j];
 			console.log(string);
 		};
-		string += "\n";
+		string += "<br>";
 	};
 	print(string, "temp");
 };
