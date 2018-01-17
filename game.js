@@ -12,6 +12,9 @@ var Ant = function(name) {
 var ant0 = new Ant("0");
 
 var para = document.createElement("P");
+para.id = "temp";
 var t = document.createTextNode("Ant0 is here: " + ant0.position);
 para.appendChild(t);
-document.body.appendChild(para);   
+document.body.appendChild(para);
+
+tekst = document.getElementById("temp");
