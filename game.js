@@ -19,6 +19,8 @@ document.body.appendChild(para);
 tekst = document.getElementById("temp");
 tekst.innerHTML = "Ant0 is here: " + ant0.position;
 
+
+
 var print = function (what, where) {
 	var elem = document.getElementById(where);
 	elem.innerHTML = what;
@@ -27,8 +29,9 @@ var print = function (what, where) {
 var drawMap = function(map) {
 	string = "";
 	for (var i = 0; i < map.length; i++) {
-		for (var j = 0; j < map[i].lenth; j++) {
+		for (var j = 0; j < map[i].length; j++) {
 			string += map[i][j];
+			console.log(string);
 		};
 		string += "/n";
 	};
