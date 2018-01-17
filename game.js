@@ -27,13 +27,13 @@ var print = function (what, where) {
 }
 
 var drawMap = function(map) {
-	string = "";
+	var string = "";
 	for (var i = 0; i < map.length; i++) {
 		for (var j = 0; j < map[i].length; j++) {
 			string += map[i][j];
 			console.log(string);
 		};
-		string += "/n";
+		string += "\n";
 	};
 	print(string, "temp");
 };
