@@ -37,3 +37,5 @@ var drawMap = function(map) {
 	};
 	print(string, "temp");
 };
+
+drawMap(map);
