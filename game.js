@@ -24,7 +24,12 @@ var drawMap = function(map) {
 	var string = "";
 	for (var i = 0; i < map.length; i++) {
 		for (var j = 0; j < map[i].length; j++) {
-			string += map[i][j];
+			if (map[i][j].ant == null) {
+				string += map[i][j].sand;
+			}
+			else {
+				string += "o";
+			}
 		};
 		string += "<br>";
 	};
@@ -60,4 +65,4 @@ document.body.appendChild(para);
 tekst = document.getElementById("temp");
 tekst.innerHTML = "Anthill is here: " + world1.map[0][0].ant.anthill;
 
-drawMap(map);
+drawMap(world1.map);
