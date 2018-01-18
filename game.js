@@ -17,8 +17,9 @@ var Ant = function(x, y) {
 	this.move = function(direction) {
 		var dest = calcDirection(this.position, direction);
  		if (!cellOccupied(dest)) {
- 			console.log(this);
- 			console.log(world1.map[this.position[0]][this.position[1]]);
+ 			console.log("this: "this);
+ 			console.log("position: "world1.map[this.position[0]][this.position[1]]);
+ 			console.log("dest: "dest);
  			world1.map[dest[0], dest[1]].ant = world1.map[this.position[0]][this.position[1]].ant;
  			world1.map[this.position[0]][this.position[1]].ant = null;
  		};
