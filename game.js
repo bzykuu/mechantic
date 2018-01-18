@@ -5,6 +5,7 @@ map = [[3, 5, 7, 5, 4, 6],
        [1, 7, 8, 3, 7, 3],
        [9, 1, 4, 1, 3, 2],
        [3, 3, 2, 2, 5, 1]];
+
 var Ant = function(x, y) {
 	this.position = [x, y];
 	this.anthill = [0, 0];
@@ -16,7 +17,8 @@ var Ant = function(x, y) {
 	this.move = function(direction) {
 		var dest = calcDirection(this.position, direction);
  		if (!cellOccupied(dest)) {
- 			world1.map[dest[0], dest[1]].ant = this;
+ 			
+ 			world1.map[dest[0], dest[1]].ant = world1.map[this.position[0], this.position[1]].ant;
  			world1.map[this.position[0], this.position[1]].ant = null;
  		};
 	}
