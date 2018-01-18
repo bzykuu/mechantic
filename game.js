@@ -8,6 +8,11 @@ map = [[3, 5, 7, 5, 4, 6],
 var Ant = function(name) {
   this.name = name;
   this.position = [0, 0];
+  this.energyMax = 1;
+  this.energy = 1;
+  this.vision = 1;
+  this.carryMax  = 1;
+  this.carry = 0;
 };
 var ant0 = new Ant("0");
 
@@ -31,11 +36,26 @@ var drawMap = function(map) {
 	for (var i = 0; i < map.length; i++) {
 		for (var j = 0; j < map[i].length; j++) {
 			string += map[i][j];
-			console.log(string);
 		};
 		string += "<br>";
 	};
 	print(string, "temp");
 };
 
-drawMap(map);
+var Cell = function(x, y, value) {
+	this.x = x;
+	this.y = y;
+	this.value = value;
+};
+
+var World = function(map) {
+	this.map = [];
+	for (var i = 0; i < map.length; i++) {
+		this.map.push([]);
+		for (var j = 0; j < map[i].length; j++) {
+			this.map[i].push(new Cell(i, j, map[i][j]));
+		};
+	};
+};
+newWorld1 = new World(map);
+console.log(newWorld1.map[3][4].value);
