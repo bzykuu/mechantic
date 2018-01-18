@@ -6,33 +6,41 @@ map = [[3, 5, 7, 5, 4, 6],
        [9, 1, 4, 1, 3, 2],
        [3, 3, 2, 2, 5, 1]];
 
+var Vector = function(x, y) {
+	this.x = x;
+	this.y = y;
+	this.sum = function(otherVector) {
+		return new Vector(this.x + otherVector.x, this.y + otherVector.y);
+	};
+};
+
 var Ant = function(x, y) {
-	this.position = [x, y];
+	this.position = new Vector(x, y);
 	this.anthill = [0, 0];
 	this.energyMax = 1;
 	this.energy = 1;
 	this.vision = 1;
-	this.carryMax  = 1;
+	this.carryMax = 1;
 	this.carry = 0;
 	this.move = function(direction) {
 		var dest = calcDirection(this.position, direction);
  		if (!cellOccupied(dest)) {
- 			console.log("this: " + this);
- 			console.log("position: " + world1.map[this.position[0]][this.position[1]]);
- 			console.log("dest: " + dest);
- 			world1.map[dest[0], dest[1]].ant = world1.map[this.position[0]][this.position[1]].ant;
- 			world1.map[this.position[0]][this.position[1]].ant = null;
+ 			world1.map[dest.x][dest.y].ant = this;
+ 			world1.map[this.position.x][this.position.y].ant = null;
  		};
 	};
 };
 
-var calcDirection = function([x, y], direction) {
+var calcDirection = function(vector, direction) {
+	var x=0, y=0;
 	switch (direction) {
-		case "N": return [x, y+1];
-		case "S": return [x, y-1];
-		case "W": return [x-1, y];
-		case "E": return [x+1, y];
+		case "N": y += 1; break;
+		case "S": y -= 1; break;
+		case "W": x -= 1; break;
+		case "E": x += 1; break;
 	};
+	var addVector = new Vector(x, y);
+	return vector.sum(addVector);
 };
 
 var cellOccupied = function(cell) {
@@ -63,7 +71,7 @@ var drawMap = function(map) {
 };
 
 var Cell = function(x, y, value) {
-	this.position = [x, y];
+	this.position = new Vector(x, y);
 	this.sand = value;
 	this.ant = null;
 };
