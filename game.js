@@ -5,25 +5,14 @@ map = [[3, 5, 7, 5, 4, 6],
        [1, 7, 8, 3, 7, 3],
        [9, 1, 4, 1, 3, 2],
        [3, 3, 2, 2, 5, 1]];
-var Ant = function(name) {
-  this.name = name;
-  this.position = [0, 0];
+var Ant = function() {
+  this.anthill = [0, 0];
   this.energyMax = 1;
   this.energy = 1;
   this.vision = 1;
   this.carryMax  = 1;
   this.carry = 0;
 };
-var ant0 = new Ant("0");
-
-var para = document.createElement("P");
-para.id = "temp";
-para.appendChild(document.createTextNode("Ant0 is here: " + ant0.position));
-document.body.appendChild(para);
-
-tekst = document.getElementById("temp");
-tekst.innerHTML = "Ant0 is here: " + ant0.position;
-
 
 
 var print = function (what, where) {
@@ -45,7 +34,8 @@ var drawMap = function(map) {
 var Cell = function(x, y, value) {
 	this.x = x;
 	this.y = y;
-	this.value = value;
+	this.sand = value;
+	this.ant = null;
 };
 
 var World = function(map) {
@@ -57,5 +47,17 @@ var World = function(map) {
 		};
 	};
 };
-newWorld1 = new World(map);
-console.log(newWorld1.map[3][4].value);
+world1 = new World(map);
+
+world1.map[0][0].ant = new Ant();
+
+
+var para = document.createElement("P");
+para.id = "temp";
+para.appendChild(document.createTextNode("Anthill is here: " + world1.map[0][0].ant.anthill));
+document.body.appendChild(para);
+
+tekst = document.getElementById("temp");
+tekst.innerHTML = "Anthill is here: " + world1.map[0][0].ant.anthill;
+
+drawMap(map);
