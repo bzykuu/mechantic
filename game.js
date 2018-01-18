@@ -15,8 +15,9 @@ var Ant = function(x, y) {
 	this.carryMax  = 1;
 	this.carry = 0;
 	this.move = function(direction) {
- 		if (!cellOccupied(direction)) {
-//jak otrzymac info o aktualnym miejscu?
+		var dest = calcDirection(direction);
+ 		if (!cellOccupied(dest) {
+ 			dest.ant = this;
  		};
 	}
 };
@@ -27,6 +28,7 @@ var calcDirection = function([x, y], direction) {
 		case "S": return [x, y-1];
 		case "W": return [x-1, y];
 		case "E": return [x+1, y];
+	};
 };
 
 var cellOccupied = function(cell) {
