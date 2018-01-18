@@ -5,15 +5,35 @@ map = [[3, 5, 7, 5, 4, 6],
        [1, 7, 8, 3, 7, 3],
        [9, 1, 4, 1, 3, 2],
        [3, 3, 2, 2, 5, 1]];
-var Ant = function() {
-  this.anthill = [0, 0];
-  this.energyMax = 1;
-  this.energy = 1;
-  this.vision = 1;
-  this.carryMax  = 1;
-  this.carry = 0;
+var Ant = function(x, y) {
+	this.x = x;
+	this.y = y;
+	this.anthill = [0, 0];
+	this.energyMax = 1;
+	this.energy = 1;
+	this.vision = 1;
+	this.carryMax  = 1;
+	this.carry = 0;
+	this.move = function(direction) {
+ 		if (!cellOccupied(direction)) {
+//jak otrzymac info o aktualnym miejscu?
+ 		};
+	}
 };
 
+var calcDirection = function([x, y], direction) {
+	switch (direction) {
+		case "N": return [x, y+1];
+		case "S": return [x, y-1];
+		case "W": return [x-1, y];
+		case "E": return [x+1, y];
+};
+
+var cellOccupied = function(cell) {
+	if (cell.ant == null)
+		return false;
+	else return true;
+}
 
 var print = function (what, where) {
 	var elem = document.getElementById(where);
@@ -22,7 +42,7 @@ var print = function (what, where) {
 
 var drawMap = function(map) {
 	var string = "";
-	for (var i = 0; i < map.length; i++) {
+	for (var i = map.length - 1; i >= 0; i--) {
 		for (var j = 0; j < map[i].length; j++) {
 			if (map[i][j].ant == null) {
 				string += map[i][j].sand;
@@ -54,7 +74,7 @@ var World = function(map) {
 };
 world1 = new World(map);
 
-world1.map[0][0].ant = new Ant();
+world1.map[0][0].ant = new Ant(0, 0);
 
 
 var para = document.createElement("P");
