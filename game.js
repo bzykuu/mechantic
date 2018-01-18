@@ -66,3 +66,8 @@ tekst = document.getElementById("temp");
 tekst.innerHTML = "Anthill is here: " + world1.map[0][0].ant.anthill;
 
 drawMap(world1.map);
+
+var para = document.createElement("P");
+para.id = "temp2";
+para.appendChild(document.createTextNode("Anthill is here: " + world1.map[0][0].ant.anthill));
+document.body.appendChild(para);
