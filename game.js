@@ -16,7 +16,7 @@ var Ant = function(x, y) {
 	this.carry = 0;
 	this.move = function(direction) {
 		var dest = calcDirection(direction);
- 		if (!cellOccupied(dest) {
+ 		if (!cellOccupied(dest)) {
  			dest.ant = this;
  		};
 	}
