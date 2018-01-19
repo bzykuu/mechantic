@@ -14,6 +14,8 @@ Vector.prototype.sum = function(otherVector) {
 		return new Vector(this.x + otherVector.x, this.y + otherVector.y);
 };
 
+
+
 var Ant = function(where) {
 	this.position = where;
 	this.anthill = [];
@@ -22,19 +24,13 @@ var Ant = function(where) {
 	this.vision = 1;
 	this.carryMax = 1;
 	this.carry = 0;
+	this.acted = 0;
 };
 Ant.prototype.move = function(direction) {
 	var dest = calcDirection(this.position, direction);
-	if (!cellOccupied(dest)) {
-		var newAnt = getCell(dest).ant = new Ant(dest);
-		newAnt.anthill = this.anthill;
-		if (direction == newAnt.anthill[newAnt.anthill.length-1]) {
-			newAnt.anthill.pop();
-		}
-		else {
-			newAnt.anthill.push(reverseDirection(direction));
-		};
-
+	console.log("dest: " + dest.x + ", " + dest.y);
+	if (cellExists(dest) && !cellOccupied(dest)) {
+		this.clone(this, dest, direction);
 		getCell(this.position).ant = null;
 	};
 };
@@ -48,9 +44,72 @@ Ant.prototype.drop = function() {
 		getCell(this.position).sand += 1;
 		this.carry -= 1;
 };
+Ant.prototype.act = function() {
+	if (this.carry == this.carryMax && this.anthill.length > 0) {
+		console.log("wraca");
+		this.move(this.anthill[this.anthill.length-1]);
+	}
+	else if (this.carry > 0 && this.anthill.length == 0) {
+		console.log("drop");
+		this.drop();
+	}
+	else if (this.carry < this.carryMax && this.anthill.length != 0 && getCell(this.position).sand > 0) {
+		console.log("harvest");
+		this.harvest();
+	}
+	else {
+		console.log("rndmove");
+		var direction;
+		var dest;
+		do {
+			direction = randomDirection();
+			dest = calcDirection(this.position, direction);
+		}
+		while (!cellExists(dest) || cellOccupied(dest));
+		console.log("position: " + this.position.x + ", " + this.position.y);
+		console.log("direction: " + direction);
+		this.move(direction);
+	};
+	this.acted = 1;
+};
+Ant.prototype.clone = function(oldAnt, where, direction) {
+	console.log("where: " + where.x + ", " + where.y + " cellExists: " + cellExists(where) + " !cellOccupied: " + !cellOccupied(where));
+	if (cellExists(where) && !cellOccupied(where)) {
+		var newAnt = getCell(where).ant = new Ant(where);
+		newAnt.anthill = oldAnt.anthill;
+		if (direction == newAnt.anthill[newAnt.anthill.length-1]) {
+			newAnt.anthill.pop();
+		}
+		else {
+			newAnt.anthill.push(reverseDirection(direction));
+		};
+		newAnt.energyMax = oldAnt.energyMax;
+		newAnt.carryMax = oldAnt.carryMax;
+		newAnt.vision = oldAnt.vision;
+		newAnt.carry = oldAnt.carry;
+		newAnt.acted = 1;
+	};
+};
+
+
+
 
 var getCell = function(vector) {
-	return world1.map[vector.x][vector.y];
+	if (world1.map[vector.x][vector.y])
+		return world1.map[vector.x][vector.y];
+};
+
+var randomDirection = function() {
+	var i = Math.floor(5 * Math.random());
+	var dir = "";
+	switch (i) {
+		case 0: dir = "N"; break;
+		case 1: dir = "S"; break;
+		case 2: dir = "W"; break;
+		case 3: dir = "E"; break;
+		case 4: break;
+	};
+	return dir;
 };
 
 var calcDirection = function(vector, direction) {
@@ -76,11 +135,22 @@ var reverseDirection = function(direction) {
 	return newDir;
 };
 
-var cellOccupied = function(cell) {
-	if (cell.ant == null)
+var cellOccupied = function(vector) {
+	if (getCell(vector).ant == null)
 		return false;
-	else return true;
+	else
+		return true;
 }
+
+var cellExists = function(vector) {
+	if (getCell(vector)) 
+		return true;
+	else
+		return flase;
+}
+
+
+
 
 var print = function (what, where) {
 	var elem = document.getElementById(where);
@@ -116,6 +186,28 @@ var World = function(map) {
 		};
 	};
 };
+World.prototype.turn = function() {
+	this.map.forEach(function(line) {
+		line.forEach(function(cell) {
+			if (cell.ant != null && cell.ant.acted == 0) {
+				cell.ant.act();
+			};
+		});
+	});
+	this.map.forEach(function(line) {
+		line.forEach(function(cell) {
+			if (cell.ant)
+				cell.ant.acted = 0;
+		});
+	});
+	drawMap(world1.map);
+};
+
+var clock = setInterval(function() {
+		world1.turn();
+}, 200);
+
+
 world1 = new World(map);
 
 world1.map[0][0].ant = new Ant(new Vector(0, 0));
@@ -130,9 +222,5 @@ tekst.innerHTML = "xxx";
 
 var para = document.createElement("P");
 para.id = "temp2";
-para.appendChild(document.createTextNode("Anthill is here: " + world1.map[0][0].ant.anthill));
+para.appendChild(document.createTextNode("some text"));
 document.body.appendChild(para);
-
-world1.map[0][0].ant.move("N");
-
-drawMap(world1.map);
