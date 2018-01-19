@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"get",
+				"getCell"
+			],
+			[
+				"ma",
+				"carryMax"
+			],
+			[
+				"proto",
+				"prototype"
+			],
+			[
+				"y",
+				"y"
+			],
+			[
 				"ge",
 				"getElementById"
 			],
@@ -19,7 +35,16 @@
 			"file": "game.js",
 			"settings":
 			{
-				"buffer_size": 2169,
+				"buffer_size": 3117,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/bzyk/Desktop/index.html",
+			"settings":
+			{
+				"buffer_size": 70,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -60,7 +85,7 @@
 	],
 	"find":
 	{
-		"height": 0.0
+		"height": 40.0
 	},
 	"find_in_files":
 	{
@@ -74,6 +99,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"calcd"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -100,15 +126,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2169,
+						"buffer_size": 3117,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								586,
-								586
+								794,
+								794
 							]
 						],
 						"settings":
@@ -116,10 +142,38 @@
 							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 45.0,
+						"translation.y": 90.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/Users/bzyk/Desktop/index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 70,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								59,
+								59
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -127,7 +181,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 0.0
+		"height": 23.0
 	},
 	"input":
 	{
@@ -164,7 +218,7 @@
 	"project": "game.sublime-project",
 	"replace":
 	{
-		"height": 0.0
+		"height": 42.0
 	},
 	"save_all_on_build": true,
 	"select_file":
