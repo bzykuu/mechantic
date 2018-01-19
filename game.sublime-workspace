@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"cell",
+				"cellOccupied"
+			],
+			[
+				"br",
+				"break"
+			],
+			[
+				"ca",
+				"carry"
+			],
+			[
+				"new",
+				"newAnt"
+			],
+			[
+				"en",
+				"energyMax"
+			],
+			[
+				"ne",
+				"newAnt"
+			],
+			[
+				"l",
+				"length-1"
+			],
+			[
+				"carry",
+				"carryMax"
+			],
+			[
 				"get",
 				"getCell"
 			],
@@ -35,16 +67,19 @@
 			"file": "game.js",
 			"settings":
 			{
-				"buffer_size": 3117,
+				"buffer_size": 5165,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
+			"contents": "<DOCTYPE! html>\n<head>\n\n\n<title>Testing\n</title>\n<script>\n\n\n\n\n</script>",
 			"file": "/C/Users/bzyk/Desktop/index.html",
+			"file_size": 5544,
+			"file_write_time": 131608482747422242,
 			"settings":
 			{
-				"buffer_size": 70,
+				"buffer_size": 71,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -99,6 +134,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"random",
 			"calcd"
 		],
 		"highlight": true,
@@ -126,23 +162,24 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3117,
+						"buffer_size": 5165,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								794,
-								794
+								1507,
+								1507
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 90.0,
+						"translation.y": 548.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -154,7 +191,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 70,
+						"buffer_size": 71,
 						"regions":
 						{
 						},
