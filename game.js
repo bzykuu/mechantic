@@ -32,9 +32,9 @@ var Ant = function(where) {
 };
 Ant.prototype.move = function(direction) {
 	var dest = calcDirection(this.position, direction);
-	if (cellExists(dest) && !cellOccupied(dest)) {
+	if (cellExists(dest)) {
 		this.clone(this, dest, direction);
-		getCell(this.position).ant = null;
+		getCell(this.position).ants.pop();
 	};
 };
 Ant.prototype.harvest = function() {
@@ -56,28 +56,35 @@ Ant.prototype.act = function() {
 //		console.log("drop");
 		this.drop();
 	}
-	else if (this.carry < this.carryMax && this.anthill.length != 0 && getCell(this.position).sand > 0) {
+	else if (this.carry < this.carryMax && this.anthill.length != 0 && getCell(this.position).sand > 0 && (this.position != new Vector(0, 0))) {
 //		console.log("harvest");
 		this.harvest();
 	}
 	else {
 //		console.log("rndmove");
+		if (this.position != new Vector(0, 0)) {
+			this.anthill = [];
+		};
 		var direction;
 		var dest;
 		do {
 			direction = randomDirection();
 			dest = calcDirection(this.position, direction);
 		}
-		while (!cellExists(dest) || cellOccupied(dest));
+		while (!cellExists(dest));
 		this.move(direction);
 	};
 	this.look();
 	this.acted = 1;
 };
 Ant.prototype.clone = function(oldAnt, where, direction) {
-	if (cellExists(where) && !cellOccupied(where)) {
-		var newAnt = getCell(where).ant = new Ant(where);
-		newAnt.anthill = oldAnt.anthill;
+	if (cellExists(where)) {
+		var newAnt = new Ant(where);
+		if (oldAnt.anthill.length > 0) {
+			oldAnt.anthill.forEach(function(dir) {
+				newAnt.anthill.push(dir);
+			})
+		};
 		if (direction == newAnt.anthill[newAnt.anthill.length-1]) {
 			newAnt.anthill.pop();
 		}
@@ -89,6 +96,8 @@ Ant.prototype.clone = function(oldAnt, where, direction) {
 		newAnt.vision = oldAnt.vision;
 		newAnt.carry = oldAnt.carry;
 		newAnt.acted = 1;
+//		console.log("prev pos: " + oldAnt.position.x + ", " + oldAnt.position.y + " new pos: " + newAnt.position.x + ", " + newAnt.position.y)
+		getCell(where).ants.push(newAnt);
 	};
 };
 Ant.prototype.look = function() {
@@ -125,7 +134,7 @@ var getCell = function(vector) {
 };
 
 var randomDirection = function() {
-	var i = Math.floor(5 * Math.random());
+	var i = Math.floor(4 * Math.random()); //4, czyli bez "w miejscu"
 	var dir = "";
 	switch (i) {
 		case 0: dir = "N"; break;
@@ -161,7 +170,7 @@ var reverseDirection = function(direction) {
 };
 
 var cellOccupied = function(vector) {
-	if (getCell(vector).ant == null)
+	if (getCell(vector).ants.length == 0)
 		return false;
 	else
 		return true;
@@ -183,15 +192,16 @@ var createNewCell = function(vector, value) {
 			world1.map.push([]);
 			world1.mapMaxX ++;
 		};
-		while (world1.map[vector.x].length < vector.y) {
-			world1.map[vector.x].push(new Cell(vector.x, vector.y, null));
+		for (var i = 0; i < vector.x; i++) {
+			while (world1.map[i].length < vector.y) {
+				world1.map[i].push(new Cell(i, vector.y, null));
+			};
 		};
 		world1.map[vector.x].push(new Cell(vector.x, vector.y, number));
 		if (world1.map[vector.x].length > world1.mapMaxY)
 			world1.mapMaxY = world1.map[vector.x].length;
 	}
 	else {
-		console.log("value: " + value);
 		getCell(dest).sand == value;
 	};
 };
@@ -208,7 +218,7 @@ var drawMap = function(map) {
 	for (var i = world1.mapMaxY - 1; i >= 0; i--) {
 		for (var j = 0; j < world1.mapMaxX; j++){
 			if (map[j][i] && map[j][i] != null) {
-				if (map[j][i].ant == null)
+				if (map[j][i].ants.length == 0)
 					if (map[j][i].sand < 10)
 						string += map[j][i].sand;
 					else
@@ -228,7 +238,7 @@ var drawMap = function(map) {
 var Cell = function(x, y, value) {
 	this.position = new Vector(x, y);
 	this.sand = value;
-	this.ant = null;
+	this.ants = [];
 };
 
 var World = function(map) {
@@ -243,20 +253,35 @@ var World = function(map) {
 	this.mapMaxY = this.map[0].length;
 };
 World.prototype.turn = function() {
+	var t = 0;
 	this.map.forEach(function(line) {
 		line.forEach(function(cell) {
-			if (cell.ant != null && cell.ant.acted == 0) {
-				cell.ant.act();
+			if (cell.ants.length > 0) {
+				for (var i = cell.ants.length-1; i >= 0; i--) {
+					if (cell.ants[i].acted == 0) {
+						t++;
+//						console.log("ant @(" + cell.ants[i].position.x + ", " + cell.ants[i].position.y + ") acted, t = " + t);
+						cell.ants[i].act();
+					};
+				};
 			};
 		});
 	});
 	this.map.forEach(function(line) {
 		line.forEach(function(cell) {
-			if (cell.ant)
-				cell.ant.acted = 0;
+			if (cell.ants.length > 0) {
+				cell.ants.forEach(function(ant) {
+					ant.acted = 0;
+				});
+			};
 		});
 	});
 	drawMap(world1.map);
+
+	var para = document.createElement("P");
+	para.id = "temp2";
+	tekst = document.getElementById("temp2");
+	tekst.innerHTML = "zberano: " + world1.map[0][0].sand;
 };
 
 var clock = setInterval(function() {
@@ -266,8 +291,11 @@ var clock = setInterval(function() {
 
 world1 = new World(map2);
 
-world1.map[0][0].ant = new Ant(new Vector(0, 0));
-
+world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
+world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
+world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
+world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
+world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
 
 var para = document.createElement("P");
 para.id = "temp";
@@ -278,5 +306,5 @@ tekst.innerHTML = "xxx";
 
 var para = document.createElement("P");
 para.id = "temp2";
-para.appendChild(document.createTextNode("some text"));
+para.appendChild(document.createTextNode("zberano: " + world1.map[0][0].sand));
 document.body.appendChild(para);
