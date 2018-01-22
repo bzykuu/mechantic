@@ -49,15 +49,16 @@ Ant.prototype.drop = function() {
 		this.carry -= 1;
 };
 Ant.prototype.act = function() {
-	if (this.carry == this.carryMax && this.anthill.length > 0) {
+//	console.log("carry: " + this.carry + ", anthill.length: " + this.anthill.length);
+	if (this.carry == this.carryMax && !this.checkIfAnthill()) {
 //		console.log("wraca");
 		this.move(this.anthill[this.anthill.length-1]);
 	}
-	else if (this.carry > 0 && this.anthill.length == 0) {
+	else if (this.carry > 0 && this.checkIfAnthill()) {
 //		console.log("drop");
 		this.drop();
 	}
-	else if (this.carry < this.carryMax && this.anthill.length != 0 && getCell(this.position).sand > 0 && (this.position != new Vector(0, 0))) {
+	else if (this.carry < this.carryMax && !this.checkIfAnthill() && getCell(this.position).sand > 0) {
 //		console.log("harvest");
 		this.harvest();
 	}
@@ -65,6 +66,7 @@ Ant.prototype.act = function() {
 //		console.log("rndmove");
 		if (this.position == new Vector(0, 0)) {
 			this.anthill = [];
+			console.log(this.anthill.length);
 		};
 		var direction;
 		var dest;
@@ -97,7 +99,6 @@ Ant.prototype.clone = function(oldAnt, where, direction) {
 		newAnt.vision = oldAnt.vision;
 		newAnt.carry = oldAnt.carry;
 		newAnt.acted = 1;
-//		console.log("prev pos: " + oldAnt.position.x + ", " + oldAnt.position.y + " new pos: " + newAnt.position.x + ", " + newAnt.position.y)
 		getCell(where).ants.push(newAnt);
 	};
 };
@@ -125,9 +126,15 @@ Ant.prototype.look = function() {
 		};
 	};
 };
-
-
-
+Ant.prototype.checkIfAnthill = function() {
+	var base = new Vector(0, 0);
+	if (this.position.x == base.x && this.position.y == base.y) {
+		return true;
+	}
+	else {
+		return false;
+	};
+};
 
 var getCell = function(vector) {
 	if (world1.map[vector.x] && world1.map[vector.x][vector.y])
@@ -254,14 +261,11 @@ var World = function(map) {
 	this.mapMaxY = this.map[0].length;
 };
 World.prototype.turn = function() {
-	var t = 0;
 	this.map.forEach(function(line) {
 		line.forEach(function(cell) {
 			if (cell.ants.length > 0) {
 				for (var i = cell.ants.length-1; i >= 0; i--) {
 					if (cell.ants[i].acted == 0) {
-						t++;
-//						console.log("ant @(" + cell.ants[i].position.x + ", " + cell.ants[i].position.y + ") acted, t = " + t);
 						cell.ants[i].act();
 					};
 				};
