@@ -6,9 +6,10 @@ map = [[3, 5, 7, 5, 4, 6],
        [9, 1, 4, 1, 3, 2],
        [3, 3, 2, 2, 5, 1]];
 var map2 = [];
-map2 = [[0, 0, 0],
-		[9, 9, 9],
-		[9, 9, 9]];
+map2 = [[5, 3, 4],
+		[3, 4, 7],
+		[4, 7, 9]];
+var antCounter = 1;
 
 var Vector = function(x, y) {
 	this.x = x;
@@ -62,7 +63,7 @@ Ant.prototype.act = function() {
 	}
 	else {
 //		console.log("rndmove");
-		if (this.position != new Vector(0, 0)) {
+		if (this.position == new Vector(0, 0)) {
 			this.anthill = [];
 		};
 		var direction;
@@ -224,7 +225,7 @@ var drawMap = function(map) {
 					else
 						string += "x";
 				else
-					string += "o";
+					string += "*";
 			}
 			else {
 				string += " ";
@@ -281,7 +282,7 @@ World.prototype.turn = function() {
 	var para = document.createElement("P");
 	para.id = "temp2";
 	tekst = document.getElementById("temp2");
-	tekst.innerHTML = "zberano: " + world1.map[0][0].sand;
+	tekst.innerHTML = "collected: " + world1.map[0][0].sand + "<br>ants: " + antCounter;
 };
 
 var clock = setInterval(function() {
@@ -292,10 +293,7 @@ var clock = setInterval(function() {
 world1 = new World(map2);
 
 world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
-world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
-world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
-world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
-world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
+
 
 var para = document.createElement("P");
 para.id = "temp";
@@ -306,5 +304,22 @@ tekst.innerHTML = "xxx";
 
 var para = document.createElement("P");
 para.id = "temp2";
-para.appendChild(document.createTextNode("zberano: " + world1.map[0][0].sand));
+para.appendChild(document.createTextNode("collected: " + world1.map[0][0].sand));
+document.body.appendChild(para);
+
+var butt = document.createElement("Button");
+butt.id = "tempButt";
+butt.appendChild(document.createTextNode("Ant!"));
+butt.onclick = function() {
+	if (world1.map[0][0].sand >= 10) {
+		world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
+		world1.map[0][0].sand -= 10;
+		antCounter ++;
+	};
+};
+document.body.appendChild(butt);
+
+var para = document.createElement("P");
+para.id = "temp3";
+para.appendChild(document.createTextNode("cost: 10"));
 document.body.appendChild(para);
