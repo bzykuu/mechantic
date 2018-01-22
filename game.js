@@ -5,6 +5,10 @@ map = [[3, 5, 7, 5, 4, 6],
        [1, 7, 8, 3, 7, 3],
        [9, 1, 4, 1, 3, 2],
        [3, 3, 2, 2, 5, 1]];
+var map2 = [];
+map2 = [[0, 0, 0],
+		[9, 9, 9],
+		[9, 9, 9]];
 
 var Vector = function(x, y) {
 	this.x = x;
@@ -28,7 +32,6 @@ var Ant = function(where) {
 };
 Ant.prototype.move = function(direction) {
 	var dest = calcDirection(this.position, direction);
-	console.log("dest: " + dest.x + ", " + dest.y);
 	if (cellExists(dest) && !cellOccupied(dest)) {
 		this.clone(this, dest, direction);
 		getCell(this.position).ant = null;
@@ -46,19 +49,19 @@ Ant.prototype.drop = function() {
 };
 Ant.prototype.act = function() {
 	if (this.carry == this.carryMax && this.anthill.length > 0) {
-		console.log("wraca");
+//		console.log("wraca");
 		this.move(this.anthill[this.anthill.length-1]);
 	}
 	else if (this.carry > 0 && this.anthill.length == 0) {
-		console.log("drop");
+//		console.log("drop");
 		this.drop();
 	}
 	else if (this.carry < this.carryMax && this.anthill.length != 0 && getCell(this.position).sand > 0) {
-		console.log("harvest");
+//		console.log("harvest");
 		this.harvest();
 	}
 	else {
-		console.log("rndmove");
+//		console.log("rndmove");
 		var direction;
 		var dest;
 		do {
@@ -66,14 +69,12 @@ Ant.prototype.act = function() {
 			dest = calcDirection(this.position, direction);
 		}
 		while (!cellExists(dest) || cellOccupied(dest));
-		console.log("position: " + this.position.x + ", " + this.position.y);
-		console.log("direction: " + direction);
 		this.move(direction);
 	};
+	this.look();
 	this.acted = 1;
 };
 Ant.prototype.clone = function(oldAnt, where, direction) {
-	console.log("where: " + where.x + ", " + where.y + " cellExists: " + cellExists(where) + " !cellOccupied: " + !cellOccupied(where));
 	if (cellExists(where) && !cellOccupied(where)) {
 		var newAnt = getCell(where).ant = new Ant(where);
 		newAnt.anthill = oldAnt.anthill;
@@ -90,12 +91,36 @@ Ant.prototype.clone = function(oldAnt, where, direction) {
 		newAnt.acted = 1;
 	};
 };
+Ant.prototype.look = function() {
+	var vector = new Vector(0, 0);
+	for (var k = 0; k <= this.vision; k++) {
+		for (var i = -k; i <= k; i++) {
+			for (var j = -i; j <= i; j++) {
+				vector.x = j;
+				vector.y = Math.abs(i) - Math.abs(j);
+				var dest = this.position.sum(vector);
+				if (dest.x >= 0 && dest.y >= 0) {
+					if (!cellExists(dest) || getCell(dest).sand == null) {
+						createNewCell(dest);
+					};
+				};
+				vector.y = -Math.abs(i) + Math.abs(j);
+				dest = this.position.sum(vector);
+				if (dest.x >= 0 && dest.y >= 0) {
+					if (!cellExists(dest) || getCell(dest).sand == null) {
+						createNewCell(dest);
+					};
+				};
+			};
+		};
+	};
+};
 
 
 
 
 var getCell = function(vector) {
-	if (world1.map[vector.x][vector.y])
+	if (world1.map[vector.x] && world1.map[vector.x][vector.y])
 		return world1.map[vector.x][vector.y];
 };
 
@@ -146,9 +171,30 @@ var cellExists = function(vector) {
 	if (getCell(vector)) 
 		return true;
 	else
-		return flase;
+		return false;
 }
 
+var createNewCell = function(vector, value) {
+	var number = Math.floor(10*Math.random());
+	if (typeof value == "number")
+		number = value;
+	if (!cellExists(vector)) {
+		while (world1.map.length <= vector.x) {
+			world1.map.push([]);
+			world1.mapMaxX ++;
+		};
+		while (world1.map[vector.x].length < vector.y) {
+			world1.map[vector.x].push(new Cell(vector.x, vector.y, null));
+		};
+		world1.map[vector.x].push(new Cell(vector.x, vector.y, number));
+		if (world1.map[vector.x].length > world1.mapMaxY)
+			world1.mapMaxY = world1.map[vector.x].length;
+	}
+	else {
+		console.log("value: " + value);
+		getCell(dest).sand == value;
+	};
+};
 
 
 
@@ -159,13 +205,21 @@ var print = function (what, where) {
 
 var drawMap = function(map) {
 	var string = "";
-	for (var i = map.length - 1; i >= 0; i--) {
-		for (var j = 0; j < map[i].length; j++){
-			if (map[j][i].ant == null)
-				string += map[j][i].sand;
-			else
-				string += "o";
-		}
+	for (var i = world1.mapMaxY - 1; i >= 0; i--) {
+		for (var j = 0; j < world1.mapMaxX; j++){
+			if (map[j][i] && map[j][i] != null) {
+				if (map[j][i].ant == null)
+					if (map[j][i].sand < 10)
+						string += map[j][i].sand;
+					else
+						string += "x";
+				else
+					string += "o";
+			}
+			else {
+				string += " ";
+			};
+		};
 		string += "<br>";
 	};
 	print(string, "temp");
@@ -185,6 +239,8 @@ var World = function(map) {
 			this.map[i].push(new Cell(i, j, map[i][j]));
 		};
 	};
+	this.mapMaxX = this.map.length;
+	this.mapMaxY = this.map[0].length;
 };
 World.prototype.turn = function() {
 	this.map.forEach(function(line) {
@@ -208,7 +264,7 @@ var clock = setInterval(function() {
 }, 200);
 
 
-world1 = new World(map);
+world1 = new World(map2);
 
 world1.map[0][0].ant = new Ant(new Vector(0, 0));
 
