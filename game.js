@@ -29,7 +29,6 @@ var Ant = function(where) {
 	this.vision = 1;
 	this.carryMax = 1;
 	this.carry = 0;
-	this.acted = 0;
 };
 Ant.prototype.move = function(direction) {
 	var dest = calcDirection(this.position, direction);
@@ -64,9 +63,9 @@ Ant.prototype.act = function() {
 	}
 	else {
 //		console.log("rndmove");
-		if (this.position == new Vector(0, 0)) {
-			this.anthill = [];
-			console.log(this.anthill.length);
+		if (this.checkIfAnthill()) {
+			while (this.anthill.length)
+				this.anthill.pop();
 		};
 		var direction;
 		var dest;
@@ -78,7 +77,6 @@ Ant.prototype.act = function() {
 		this.move(direction);
 	};
 	this.look();
-	this.acted = 1;
 };
 Ant.prototype.clone = function(oldAnt, where, direction) {
 	if (cellExists(where)) {
@@ -88,7 +86,7 @@ Ant.prototype.clone = function(oldAnt, where, direction) {
 				newAnt.anthill.push(dir);
 			})
 		};
-		if (direction == newAnt.anthill[newAnt.anthill.length-1]) {
+		if (newAnt.anthill.length > 0 && direction == newAnt.anthill[newAnt.anthill.length-1]) {
 			newAnt.anthill.pop();
 		}
 		else {
@@ -98,8 +96,7 @@ Ant.prototype.clone = function(oldAnt, where, direction) {
 		newAnt.carryMax = oldAnt.carryMax;
 		newAnt.vision = oldAnt.vision;
 		newAnt.carry = oldAnt.carry;
-		newAnt.acted = 1;
-		getCell(where).ants.push(newAnt);
+		getCell(where).acted.push(newAnt);
 	};
 };
 Ant.prototype.look = function() {
@@ -247,6 +244,7 @@ var Cell = function(x, y, value) {
 	this.position = new Vector(x, y);
 	this.sand = value;
 	this.ants = [];
+	this.acted = [];
 };
 
 var World = function(map) {
@@ -265,8 +263,9 @@ World.prototype.turn = function() {
 		line.forEach(function(cell) {
 			if (cell.ants.length > 0) {
 				for (var i = cell.ants.length-1; i >= 0; i--) {
-					if (cell.ants[i].acted == 0) {
-						cell.ants[i].act();
+					cell.ants[i].act();
+					if (i == cell.ants.length-1) {
+						cell.acted.push(cell.ants.pop());
 					};
 				};
 			};
@@ -274,10 +273,10 @@ World.prototype.turn = function() {
 	});
 	this.map.forEach(function(line) {
 		line.forEach(function(cell) {
-			if (cell.ants.length > 0) {
-				cell.ants.forEach(function(ant) {
-					ant.acted = 0;
-				});
+			if (cell.acted.length > 0) {
+				for (var i = cell.acted.length-1; i>=0 ; i--) {
+					cell.ants.push(cell.acted.pop());
+				};
 			};
 		});
 	});
@@ -317,6 +316,7 @@ butt.appendChild(document.createTextNode("Ant!"));
 butt.onclick = function() {
 	if (world1.map[0][0].sand >= 10) {
 		world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
+		world1.map[0][0].ants[world1.map[0][0].ants.length-1].acted = 1;
 		world1.map[0][0].sand -= 10;
 		antCounter ++;
 	};
