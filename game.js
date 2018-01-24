@@ -10,6 +10,8 @@ map2 = [[5, 3, 4],
 		[3, 4, 7],
 		[4, 7, 9]];
 var antCounter = 1;
+var turnCounter = 1;
+var backgroundPheromone = 1; //+waga do ruchu bez pheromonow
 
 var Vector = function(x, y) {
 	this.x = x;
@@ -29,6 +31,7 @@ var Ant = function(where) {
 	this.vision = 1;
 	this.carryMax = 1;
 	this.carry = 0;
+	this.goingBack = 0;
 };
 Ant.prototype.move = function(direction) {
 	var dest = calcDirection(this.position, direction);
@@ -49,8 +52,18 @@ Ant.prototype.drop = function() {
 };
 Ant.prototype.act = function() {
 //	console.log("carry: " + this.carry + ", anthill.length: " + this.anthill.length);
-	if (this.carry == this.carryMax && !this.checkIfAnthill()) {
-//		console.log("wraca");
+	if (this.goingBack == 1) {
+//		console.log("wraca pusta");
+		if (this.checkIfAnthill()) {
+			this.goingBack = 0;
+		}
+		else {
+			this.move(this.anthill[this.anthill.length-1]);
+		};
+	}
+	else if (this.carry == this.carryMax && !this.checkIfAnthill()) {
+//		console.log("wraca i niesie");
+		this.leaveTrail();
 		this.move(this.anthill[this.anthill.length-1]);
 	}
 	else if (this.carry > 0 && this.checkIfAnthill()) {
@@ -69,12 +82,24 @@ Ant.prototype.act = function() {
 		};
 		var direction;
 		var dest;
+		var possibleDirections = this.checkPheromones();
 		do {
-			direction = randomDirection();
+			direction = randomDirection(possibleDirections);
 			dest = calcDirection(this.position, direction);
+			if (direction == "N")
+				possibleDirections[0] = -1;
+			else if (direction == "S")
+				possibleDirections[1] = -1;
+			else if (direction == "W")
+				possibleDirections[2] = -1;
+			else if (direction == "E")
+				possibleDirections[3] = -1;
 		}
-		while (!cellExists(dest));
-		this.move(direction);
+		while ((direction != "blindAlley") && (!cellExists(dest) || this.checkBacktrack(direction)));
+		if (direction != "blindAlley")
+			this.move(direction);
+		else
+			this.goingBack = 1; //zacznie wracac
 	};
 	this.look();
 };
@@ -96,6 +121,7 @@ Ant.prototype.clone = function(oldAnt, where, direction) {
 		newAnt.carryMax = oldAnt.carryMax;
 		newAnt.vision = oldAnt.vision;
 		newAnt.carry = oldAnt.carry;
+		newAnt.goingBack = oldAnt.goingBack;
 		getCell(where).acted.push(newAnt);
 	};
 };
@@ -132,23 +158,72 @@ Ant.prototype.checkIfAnthill = function() {
 		return false;
 	};
 };
+Ant.prototype.leaveTrail = function() {
+	getCell(this.position).pheromone += (3 * this.anthill.length);
+};
+Ant.prototype.checkPheromones = function() {
+	var n = 0;
+	if (getCell(this.position.sum(new Vector(0, 1))) && this.anthill[this.anthill.length-1] != "N")
+		n = getCell(this.position.sum(new Vector(0, 1))).pheromone;
+	var s = 0;
+	if (getCell(this.position.sum(new Vector(0, -1))) && this.anthill[this.anthill.length-1] != "S")
+		s = getCell(this.position.sum(new Vector(0, -1))).pheromone;
+	var w = 0;
+	if (getCell(this.position.sum(new Vector(-1, 0))) && this.anthill[this.anthill.length-1] != "W")
+		w = getCell(this.position.sum(new Vector(-1, 0))).pheromone;
+	var e = 0;
+	if (getCell(this.position.sum(new Vector(1, 0))) && this.anthill[this.anthill.length-1] != "E")
+		e = getCell(this.position.sum(new Vector(1, 0))).pheromone;
+	var t = backgroundPheromone;
+	return [n+t, s+t, w+t, e+t];
+};
+Ant.prototype.checkBacktrack = function(direction) {
+	var vector = directionToVector(reverseDirection(direction));
+	for (var i = this.anthill.length-1; i>=0; i--) {
+		vector = vector.sum(directionToVector(this.anthill[i]));
+		if (vector.x == 0 && vector.y == 0) {
+			return true;
+		};
+	};
+	return false;
+};
+
+
+
 
 var getCell = function(vector) {
 	if (world1.map[vector.x] && world1.map[vector.x][vector.y])
 		return world1.map[vector.x][vector.y];
 };
 
-var randomDirection = function() {
-	var i = Math.floor(4 * Math.random()); //4, czyli bez "w miejscu"
+var randomDirection = function([n, s, w, e]) {
+	if (n == -1) n = 0;
+	if (s == -1) s = 0;
+	if (w == -1) w = 0;
+	if (e == -1) e = 0;
+	var i = Math.floor((n+s+w+e) * Math.random());
 	var dir = "";
-	switch (i) {
-		case 0: dir = "N"; break;
-		case 1: dir = "S"; break;
-		case 2: dir = "W"; break;
-		case 3: dir = "E"; break;
-		case 4: break;
+	if ((n+s+w+e) == 0) {
+		dir = "blindAlley";
+	}
+	else if (i < n) {
+		dir = "N";
+	}
+	else if (i < n+s) {
+		dir = "S";
+	}
+	else if (i < n+s+w) {
+		dir = "W";
+	}
+	else if (i < n+s+w+e) {
+		dir = "E";
 	};
 	return dir;
+};
+
+var directionToVector = function(direction) {
+	var vector = new Vector(0, 0);
+	return calcDirection(vector, direction);
 };
 
 var calcDirection = function(vector, direction) {
@@ -193,12 +268,12 @@ var createNewCell = function(vector, value) {
 	if (typeof value == "number")
 		number = value;
 	if (!cellExists(vector)) {
-		while (world1.map.length <= vector.x) {
+		while (world1.mapMaxX <= vector.x) {
 			world1.map.push([]);
 			world1.mapMaxX ++;
 		};
 		for (var i = 0; i < vector.x; i++) {
-			while (world1.map[i].length < vector.y) {
+			while (world1.map[i].length <= vector.y) {
 				world1.map[i].push(new Cell(i, vector.y, null));
 			};
 		};
@@ -207,7 +282,7 @@ var createNewCell = function(vector, value) {
 			world1.mapMaxY = world1.map[vector.x].length;
 	}
 	else {
-		getCell(dest).sand == value;
+		getCell(vector).sand = number;
 	};
 };
 
@@ -218,26 +293,44 @@ var print = function (what, where) {
 	elem.innerHTML = what;
 }
 
-var drawMap = function(map) {
+var drawMap = function(map, where) {
 	var string = "";
 	for (var i = world1.mapMaxY - 1; i >= 0; i--) {
 		for (var j = 0; j < world1.mapMaxX; j++){
-			if (map[j][i] && map[j][i] != null) {
+			if (map[j][i] && map[j][i].sand != null) {
 				if (map[j][i].ants.length == 0)
-					if (map[j][i].sand < 10)
+					if (map[j][i].sand < 10) {
 						string += map[j][i].sand;
+						string += " ";
+					}
 					else
-						string += "x";
+						string += "x ";
 				else
-					string += "*";
+					string += "* ";
 			}
 			else {
-				string += " ";
+				string += "&nbsp;&nbsp;";
 			};
 		};
 		string += "<br>";
 	};
-	print(string, "temp");
+	print(string, where);
+};
+var drawMapPhero = function(map, where) {
+	var string = "";
+	for (var i = world1.mapMaxY - 1; i >= 0; i--) {
+		for (var j = 0; j < world1.mapMaxX; j++){
+			if (map[j][i] && map[j][i] != null) {
+				string += map[j][i].pheromone;
+				string += " ";
+			}
+			else {
+				string += "  ";
+			};
+		};
+		string += "<br>";
+	};
+	print(string, where);
 };
 
 var Cell = function(x, y, value) {
@@ -245,6 +338,7 @@ var Cell = function(x, y, value) {
 	this.sand = value;
 	this.ants = [];
 	this.acted = [];
+	this.pheromone = 0;
 };
 
 var World = function(map) {
@@ -278,14 +372,19 @@ World.prototype.turn = function() {
 					cell.ants.push(cell.acted.pop());
 				};
 			};
+			if (cell.pheromone >= 1) {
+				cell.pheromone -= 1;
+			};
 		});
 	});
-	drawMap(world1.map);
+	drawMap(world1.map, "temp");
+	drawMapPhero(world1.map, "temp3");
 
 	var para = document.createElement("P");
 	para.id = "temp2";
 	tekst = document.getElementById("temp2");
-	tekst.innerHTML = "collected: " + world1.map[0][0].sand + "<br>ants: " + antCounter;
+	tekst.innerHTML = "collected: " + world1.map[0][0].sand + "<br>ants: " + antCounter + "<br>sand/100turn: " + Math.floor(100*((world1.map[0][0].sand)+10*antCounter)/turnCounter);
+	turnCounter++;
 };
 
 var clock = setInterval(function() {
@@ -303,6 +402,13 @@ para.id = "temp";
 para.appendChild(document.createTextNode("yyy"));
 document.body.appendChild(para);
 tekst = document.getElementById("temp");
+tekst.innerHTML = "xxx";
+
+var para = document.createElement("P");
+para.id = "temp3";
+para.appendChild(document.createTextNode("yyy"));
+document.body.appendChild(para);
+tekst = document.getElementById("temp3");
 tekst.innerHTML = "xxx";
 
 var para = document.createElement("P");
