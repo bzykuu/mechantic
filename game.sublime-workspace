@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"directionT",
+				"directionsTable"
+			],
+			[
+				"le",
+				"length"
+			],
+			[
 				"turn",
 				"turnCounter"
 			],
@@ -37,10 +45,6 @@
 			],
 			[
 				"length",
-				"length-1"
-			],
-			[
-				"le",
 				"length-1"
 			],
 			[
@@ -147,7 +151,7 @@
 			"file": "game.js",
 			"settings":
 			{
-				"buffer_size": 11036,
+				"buffer_size": 11604,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -155,8 +159,8 @@
 		{
 			"contents": "<DOCTYPE! html>\n<head>\n\n\n<title>Testing\n</title>\n<script>\n\n\n\n\n</script>",
 			"file": "/C/Users/bzyk/Desktop/index.html",
-			"file_size": 11552,
-			"file_write_time": 131612918757556644,
+			"file_size": 12136,
+			"file_write_time": 131613621994090183,
 			"settings":
 			{
 				"buffer_size": 71,
@@ -214,6 +218,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"calcD",
+			"leav",
 			"sand",
 			"+= ",
 			"{\n",
@@ -259,15 +265,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11036,
+						"buffer_size": 11604,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7755,
-								7755
+								4756,
+								4756
 							]
 						],
 						"settings":
@@ -276,7 +282,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4061.0,
+						"translation.y": 2250.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
