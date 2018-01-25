@@ -4,8 +4,48 @@
 		"selected_items":
 		[
 			[
+				"turn",
+				"turnCounter"
+			],
+			[
+				"tu",
+				"turnCounter"
+			],
+			[
+				"ch",
+				"checkIfAnthill"
+			],
+			[
+				"po",
+				"possibleDirections"
+			],
+			[
+				"re",
+				"return"
+			],
+			[
+				"dire",
+				"direction"
+			],
+			[
+				"V",
+				"Vector"
+			],
+			[
+				"v",
+				"vector"
+			],
+			[
 				"length",
-				"length"
+				"length-1"
+			],
+			[
+				"le",
+				"length-1"
+			],
+			[
+				"p",
+				"prototype"
 			],
 			[
 				"l",
@@ -22,10 +62,6 @@
 			[
 				"leng",
 				"length"
-			],
-			[
-				"le",
-				"length-1"
 			],
 			[
 				"pos",
@@ -111,7 +147,7 @@
 			"file": "game.js",
 			"settings":
 			{
-				"buffer_size": 7902,
+				"buffer_size": 11036,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -119,8 +155,8 @@
 		{
 			"contents": "<DOCTYPE! html>\n<head>\n\n\n<title>Testing\n</title>\n<script>\n\n\n\n\n</script>",
 			"file": "/C/Users/bzyk/Desktop/index.html",
-			"file_size": 8435,
-			"file_write_time": 131611409084210515,
+			"file_size": 11552,
+			"file_write_time": 131612918757556644,
 			"settings":
 			{
 				"buffer_size": 71,
@@ -178,6 +214,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"sand",
+			"+= ",
+			"{\n",
+			"antC",
+			"pher",
+			"\"\"",
+			"randomd",
 			"freed",
 			"free",
 			"cons",
@@ -216,15 +259,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7902,
+						"buffer_size": 11036,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6289,
-								6289
+								7755,
+								7755
 							]
 						],
 						"settings":
@@ -233,7 +276,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3739.0,
+						"translation.y": 4061.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -252,8 +295,8 @@
 						"selection":
 						[
 							[
-								59,
-								59
+								60,
+								60
 							]
 						],
 						"settings":

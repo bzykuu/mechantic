@@ -9,9 +9,12 @@ var map2 = [];
 map2 = [[5, 3, 4],
 		[3, 4, 7],
 		[4, 7, 9]];
+var step = 50; //refresh rate
 var antCounter = 1;
 var turnCounter = 1;
-var backgroundPheromone = 1; //+waga do ruchu bez pheromonow
+var backgroundPheromone = 5; //+waga do ruchu bez pheromonow
+var directionsTable = ["N", "S", "W", "E"];
+
 
 var Vector = function(x, y) {
 	this.x = x;
@@ -83,6 +86,15 @@ Ant.prototype.act = function() {
 		var direction;
 		var dest;
 		var possibleDirections = this.checkPheromones();
+		for (var i = 0; i < directionsTable.length; i++) {
+			dest = calcDirection(this.position, directionsTable[i]);
+			if (getCell(dest) && getCell(dest).sand > 0) {
+				possibleDirections[i] = 1000; //go eat
+			};
+			if (direction == "N" || direction == "E") {
+				possibleDirections[i] += backgroundPheromone; //oddalaj sie od mrowiska
+			};
+		};
 		do {
 			direction = randomDirection(possibleDirections);
 			dest = calcDirection(this.position, direction);
@@ -159,7 +171,7 @@ Ant.prototype.checkIfAnthill = function() {
 	};
 };
 Ant.prototype.leaveTrail = function() {
-	getCell(this.position).pheromone += (3 * this.anthill.length);
+	getCell(this.position).pheromone = Math.floor(this.anthill.length * 3 * Math.max(Math.log(this.anthill.length), 4));
 };
 Ant.prototype.checkPheromones = function() {
 	var n = 0;
@@ -174,6 +186,10 @@ Ant.prototype.checkPheromones = function() {
 	var e = 0;
 	if (getCell(this.position.sum(new Vector(1, 0))) && this.anthill[this.anthill.length-1] != "E")
 		e = getCell(this.position.sum(new Vector(1, 0))).pheromone;
+	if (n > 100) n = 100;
+	if (s > 100) s = 100;
+	if (w > 100) w = 100;
+	if (e > 100) e = 100;
 	var t = backgroundPheromone;
 	return [n+t, s+t, w+t, e+t];
 };
@@ -389,7 +405,7 @@ World.prototype.turn = function() {
 
 var clock = setInterval(function() {
 		world1.turn();
-}, 200);
+}, step);
 
 
 world1 = new World(map2);
