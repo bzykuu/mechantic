@@ -310,27 +310,33 @@ var print = function (what, where) {
 }
 
 var drawMap = function(map, where) {
-	var string = "";
-	for (var i = world1.mapMaxY - 1; i >= 0; i--) {
+	var mapGrid = document.getElementById("mapGrid");
+	mapGrid.innerHTML = "";
+	for (var i = world1.mapMaxY-1; i >= 0; i--) {
+		var row = document.createElement("ul");
+        row.setAttribute("id", "row" + i);
+        row.className = "mapRow";
+		mapGrid.appendChild(row);
 		for (var j = 0; j < world1.mapMaxX; j++){
-			if (map[j][i] && map[j][i].sand != null) {
-				if (map[j][i].ants.length == 0)
-					if (map[j][i].sand < 10) {
-						string += map[j][i].sand;
-						string += " ";
-					}
-					else
-						string += "x ";
-				else
-					string += "* ";
-			}
-			else {
-				string += "&nbsp;&nbsp;";
-			};
+			var cell = document.createElement("li");
+	        cell.setAttribute("id", "cell(" + j + ", " + i + ")");
+    	    cell.className = "mapCell";
+    	    row.appendChild(cell);
+    	    cell.style.width = "30px"//(100 / (world1.mapMaxX+1)) + "%";
+    	    if (map[j][i] && map[j][i].pheromone > 0) {
+	    	    cell.style.backgroundColor = "orange";
+	    	};
+    	    if (map[j][i] && map[j][i].ants.length > 0) {
+    	    	cell.innerHTML = "*";
+    	    }
+    	    else if (map[j][i]){
+	    	    cell.innerHTML = map[j][i].sand;
+	    	}
+	    	else {
+	    		cell.innerHTML = "&nbsp;";
+	    	};
 		};
-		string += "<br>";
 	};
-	print(string, where);
 };
 var drawMapPhero = function(map, where) {
 	var string = "";
@@ -413,24 +419,26 @@ world1 = new World(map2);
 world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
 
 
+var bottomRow = document.getElementById("bottomRow");
+
 var para = document.createElement("P");
 para.id = "temp";
 para.appendChild(document.createTextNode("yyy"));
-document.body.appendChild(para);
+bottomRow.appendChild(para);
 tekst = document.getElementById("temp");
 tekst.innerHTML = "xxx";
 
 var para = document.createElement("P");
 para.id = "temp3";
 para.appendChild(document.createTextNode("yyy"));
-document.body.appendChild(para);
+bottomRow.appendChild(para);
 tekst = document.getElementById("temp3");
 tekst.innerHTML = "xxx";
 
 var para = document.createElement("P");
 para.id = "temp2";
 para.appendChild(document.createTextNode("collected: " + world1.map[0][0].sand));
-document.body.appendChild(para);
+bottomRow.appendChild(para);
 
 var butt = document.createElement("Button");
 butt.id = "tempButt";
@@ -443,7 +451,7 @@ butt.onclick = function() {
 		antCounter ++;
 	};
 };
-document.body.appendChild(butt);
+bottomRow.appendChild(butt);
 
 var para = document.createElement("P");
 para.id = "temp3";
