@@ -430,3 +430,14 @@ butt.onclick = function() {
 	};
 };
 antButton.appendChild(butt);
+
+var gameState;
+var req = new XMLHttpRequest();
+req.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+		gameState = this.responseText;
+	};
+};
+req.open("GET", "gameState.txt", true);
+req.send();
+console.log(gameState);
