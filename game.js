@@ -431,13 +431,13 @@ butt.onclick = function() {
 };
 antButton.appendChild(butt);
 
-var gameState;
+var gameState = {};
 var req = new XMLHttpRequest();
 req.onreadystatechange = function() {
 	if (this.readyState == 4 && this.status == 200) {
 		gameState = JSON.parse(this.responseText);
+		console.log(gameState.player1Ants);
 	};
 };
-req.open("GET", "gameState.txt", true);
+req.open("GET", "gameState.json", true);
 req.send();
-console.log(gameState.player1Ants);
