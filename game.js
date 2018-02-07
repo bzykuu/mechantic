@@ -431,13 +431,32 @@ butt.onclick = function() {
 };
 antButton.appendChild(butt);
 
-var gameState = {};
-var req = new XMLHttpRequest();
-req.onreadystatechange = function() {
-	if (this.readyState == 4 && this.status == 200) {
-		gameState = JSON.parse(this.responseText);
-		console.log(gameState.player1Ants);
+var readGameState = function () {
+	var gameState;
+	var req = new XMLHttpRequest();
+	req.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			gameState = this.responseText;
+			console.log(this.responseText + "!");
+			return gameState;
+		};
 	};
+	req.open("GET", "gameState2.asp", true);
+	req.send();
 };
-req.open("GET", "gameState.json", true);
-req.send();
+
+var changeGameState = function (attribute, value) {
+	var gameState;
+	var req = new XMLHttpRequest();
+	req.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			gameState = JSON.parse(this.responseText);
+			gameState.attribute = value;
+			var sendReq = new XMLHttpRequest();
+			sendReq.open("POST", JSON.stringify(gameState), true);
+			sendReq.send();
+		};
+	};
+	req.open("GET", "gameState.json", true);
+	req.send();
+};
