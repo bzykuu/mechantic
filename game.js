@@ -310,8 +310,10 @@ var print = function (what, where) {
 }
 
 var drawMap = function(map, where) {
-	var mapGrid = document.getElementById("mapGrid");
+	var mapGrid = document.getElementById(where);
 	mapGrid.innerHTML = "";
+	document.getElementById("mapBox").style.width = 30 * world1.mapMaxX + "px";
+	document.getElementById("mapBox").style.height = 24 * world1.mapMaxY - 1 + "px";
 	for (var i = world1.mapMaxY-1; i >= 0; i--) {
 		var row = document.createElement("ul");
         row.setAttribute("id", "row" + i);
@@ -399,13 +401,10 @@ World.prototype.turn = function() {
 			};
 		});
 	});
-	drawMap(world1.map, "temp");
-	drawMapPhero(world1.map, "temp3");
+	drawMap(world1.map, "mapGrid");
+//	drawMapPhero(world1.map, "temp3");
 
-	var para = document.createElement("P");
-	para.id = "temp2";
-	tekst = document.getElementById("temp2");
-	tekst.innerHTML = "collected: " + world1.map[0][0].sand + "<br>ants: " + antCounter + "<br>sand/100turn: " + Math.floor(100*((world1.map[0][0].sand)+10*antCounter)/turnCounter);
+	document.getElementById("antCounter").innerHTML = "collected: " + world1.map[0][0].sand + "<br>ants: " + antCounter + "<br>sand/100turn: " + Math.floor(100*((world1.map[0][0].sand)+10*antCounter)/turnCounter);
 	turnCounter++;
 };
 
@@ -419,29 +418,8 @@ world1 = new World(map2);
 world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
 
 
-var bottomRow = document.getElementById("bottomRow");
-
-var para = document.createElement("P");
-para.id = "temp";
-para.appendChild(document.createTextNode("yyy"));
-bottomRow.appendChild(para);
-tekst = document.getElementById("temp");
-tekst.innerHTML = "xxx";
-
-var para = document.createElement("P");
-para.id = "temp3";
-para.appendChild(document.createTextNode("yyy"));
-bottomRow.appendChild(para);
-tekst = document.getElementById("temp3");
-tekst.innerHTML = "xxx";
-
-var para = document.createElement("P");
-para.id = "temp2";
-para.appendChild(document.createTextNode("collected: " + world1.map[0][0].sand));
-bottomRow.appendChild(para);
-
+var antButton = document.getElementById("antButton");
 var butt = document.createElement("Button");
-butt.id = "tempButt";
 butt.appendChild(document.createTextNode("Ant!"));
 butt.onclick = function() {
 	if (world1.map[0][0].sand >= 10) {
@@ -451,9 +429,4 @@ butt.onclick = function() {
 		antCounter ++;
 	};
 };
-bottomRow.appendChild(butt);
-
-var para = document.createElement("P");
-para.id = "temp3";
-para.appendChild(document.createTextNode("cost: 10"));
-document.body.appendChild(para);
+antButton.appendChild(butt);
