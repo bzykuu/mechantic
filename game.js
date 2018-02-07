@@ -435,9 +435,9 @@ var gameState;
 var req = new XMLHttpRequest();
 req.onreadystatechange = function() {
 	if (this.readyState == 4 && this.status == 200) {
-		gameState = this.responseText;
+		gameState = JSON.parse(this.responseText);
 	};
 };
 req.open("GET", "gameState.txt", true);
 req.send();
-console.log(gameState);
+console.log(gameState.player1Ants);
