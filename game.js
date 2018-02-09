@@ -436,12 +436,12 @@ var readGameState = function () {
 	var req = new XMLHttpRequest();
 	req.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			gameState = this.responseText;
-			console.log(this.responseText + "!");
+			gameState = JSON.parse(this.responseText);
+			console.log(gameState.player1Ants);
 			return gameState;
 		};
 	};
-	req.open("GET", "gameState2.asp", true);
+	req.open("GET", "gameState.json", true);
 	req.send();
 };
 
