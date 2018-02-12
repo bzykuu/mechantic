@@ -10,21 +10,32 @@ var mimeType = {
     '.css': 'text/css'
 };
 
+var resetGameState = function () {
+	return JSON.parse(fs.readFileSync("./gameStateOriginal.json"));
+};
+var gameState = resetGameState();
+
 var server = http.createServer(function(request, response) {
 	var fileName;
 	fileName = url.parse(request.url).pathname;
 	if (request.method == "GET") {
-		fs.readFile("." + fileName, function(err, data) {
-			var ext  = path.parse(fileName).ext;
-			if (fileName == "/gameStateOriginal.json") {
-				fs.writeFile("./gameState.json", data, function (err, file) {
-					if (err) throw err;
-				});
-			};
-			response.writeHead(200, {"Content-Type": mimeType[ext]});
-			response.write(data);
+		var ext  = path.parse(fileName).ext;
+		response.writeHead(200, {"Content-Type": mimeType[ext]});
+		if (fileName == "/gameStateOriginal.json") {
+			gameState = resetGameState();
+			response.write(JSON.stringify(gameState));
 			response.end();
-		});
+		}
+		else if (fileName == "/gameState.json") {
+			response.write(JSON.stringify(gameState));
+			response.end();
+		}
+		else {
+			fs.readFile("." + fileName, function(err, data) {
+				response.write(data);
+				response.end();
+			});
+		};
 	}
 	else if (request.method == "POST") {
 		if (fileName == "/gameState.json") {
@@ -34,12 +45,8 @@ var server = http.createServer(function(request, response) {
 		    });
 		    request.on('end', function() {
 		        body = Buffer.concat(body).toString();
-			    bodyObject = JSON.parse(body);
+			    gameState = JSON.parse(body);
 
-			    fs.writeFile("." + fileName, body, function (err, file) {
-					if (err) throw err;
-				});
-	
 				var ext  = path.parse(fileName).ext;
 				response.writeHead(200, {"Content-Type": mimeType[ext]});
 				response.end();

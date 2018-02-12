@@ -404,6 +404,9 @@ World.prototype.turn = function() {
 	drawMap(world1.map, "map1Grid");
 //	drawMapPhero(world1.map, "temp3");
 
+	if (player > 0) {
+		changeGameState("player" + player + "Ants", antCounter);
+	};
 	document.getElementById("antCounter").innerHTML = "collected: " + world1.map[0][0].sand + "<br>ants: " + antCounter + "<br>sand/100turn: " + Math.floor(100*((world1.map[0][0].sand)+10*antCounter)/turnCounter);
 	turnCounter++;
 };
@@ -496,6 +499,8 @@ var resetGame = function () {
 			world1 = new World(map2);
 			world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
 			turnCounter = 1;
+			antCounter = 1;
+			player = 0;
 		};
 	};
 	req.open("GET", "gameStateOriginal.json", true);
@@ -506,6 +511,7 @@ var readGameState = function () {
 	var req = new XMLHttpRequest();
 	req.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
+//			console.log(this.responseText);
 			gameState = JSON.parse(this.responseText);
 		};
 	};
@@ -527,7 +533,6 @@ var changeGameState = function (attribute, value) {
 		if (this.readyState == 4 && this.status == 200) {
 			state = JSON.parse(this.responseText);
 			state[attribute] = value;
-			console.log(state.player1Seat);
 			var sendReq = new XMLHttpRequest();
 			sendReq.open("POST", "gameState.json", true);
 			sendReq.send(JSON.stringify(state));
