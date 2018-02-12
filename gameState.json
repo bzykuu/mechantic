@@ -1,1 +1,6 @@
-{"player1Seat":true,"player2Seat":false,"player1Ants":1,"player2Ants":1}
+{
+"player1Seat":false,
+"player2Seat":false,
+"player1Ants":1,
+"player2Ants":1
+}

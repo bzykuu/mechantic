@@ -403,15 +403,17 @@ World.prototype.turn = function() {
 	});
 	drawMap(world1.map, "map1Grid");
 //	drawMapPhero(world1.map, "temp3");
-	readGameState();
-	timerChange();
 
 	document.getElementById("antCounter").innerHTML = "collected: " + world1.map[0][0].sand + "<br>ants: " + antCounter + "<br>sand/100turn: " + Math.floor(100*((world1.map[0][0].sand)+10*antCounter)/turnCounter);
 	turnCounter++;
 };
 
 var clock = setInterval(function() {
+	readGameState();
+	timerChange();
+	if (gameState.player1Seat && gameState.player2Seat) {
 		world1.turn();
+	};
 }, step);
 
 
@@ -491,6 +493,9 @@ var resetGame = function () {
 	req.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			gameState = JSON.parse(this.responseText);
+			world1 = new World(map2);
+			world1.map[0][0].ants.push(new Ant(new Vector(0, 0)));
+			turnCounter = 1;
 		};
 	};
 	req.open("GET", "gameStateOriginal.json", true);
@@ -502,8 +507,6 @@ var readGameState = function () {
 	req.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			gameState = JSON.parse(this.responseText);
-//			console.log(gameState);
-//			return JSON.parse(this.responseText);
 		};
 	};
 	req.open("GET", "gameState.json", true);
