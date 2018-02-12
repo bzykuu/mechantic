@@ -463,6 +463,14 @@ butt.onclick = function() {
 };
 rightButton.appendChild(butt);
 
+var resetButton = document.getElementById("resetButton");
+var butt = document.createElement("Button");
+butt.appendChild(document.createTextNode("Reset"));
+butt.onclick = function() {
+	resetGame();
+};
+resetButton.appendChild(butt);
+
 var timer = document.getElementById("timer");
 var timerText = document.createElement("p");
 timerText.setAttribute("id", "timerText")
@@ -476,6 +484,17 @@ var timerChange = function() {
 	else {
 		document.getElementById("timerText").innerHTML = "Waiting";	
 	}
+};
+
+var resetGame = function () {
+	var req = new XMLHttpRequest();
+	req.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			gameState = JSON.parse(this.responseText);
+		};
+	};
+	req.open("GET", "gameStateOriginal.json", true);
+	req.send();
 };
 
 var readGameState = function () {

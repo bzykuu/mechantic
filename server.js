@@ -16,6 +16,11 @@ var server = http.createServer(function(request, response) {
 	if (request.method == "GET") {
 		fs.readFile("." + fileName, function(err, data) {
 			var ext  = path.parse(fileName).ext;
+			if (fileName == "/gameStateOriginal.json") {
+				fs.writeFile("./gameState.json", data, function (err, file) {
+					if (err) throw err;
+				});
+			};
 			response.writeHead(200, {"Content-Type": mimeType[ext]});
 			response.write(data);
 			response.end();
