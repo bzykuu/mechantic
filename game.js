@@ -14,7 +14,8 @@ var antCounter = 1;
 var turnCounter = 1;
 var backgroundPheromone = 5; //+waga do ruchu bez pheromonow
 var directionsTable = ["N", "S", "W", "E"];
-
+var player = 0;
+var gameState;
 
 var Vector = function(x, y) {
 	this.x = x;
@@ -23,7 +24,6 @@ var Vector = function(x, y) {
 Vector.prototype.sum = function(otherVector) {
 		return new Vector(this.x + otherVector.x, this.y + otherVector.y);
 };
-
 
 
 var Ant = function(where) {
@@ -312,8 +312,8 @@ var print = function (what, where) {
 var drawMap = function(map, where) {
 	var mapGrid = document.getElementById(where);
 	mapGrid.innerHTML = "";
-	document.getElementById("mapBox").style.width = 30 * world1.mapMaxX + "px";
-	document.getElementById("mapBox").style.height = 24 * world1.mapMaxY - 1 + "px";
+	mapGrid.parentNode.style.width = 30 * world1.mapMaxX + "px";
+	mapGrid.parentNode.style.height = 24 * world1.mapMaxY - 1 + "px";
 	for (var i = world1.mapMaxY-1; i >= 0; i--) {
 		var row = document.createElement("ul");
         row.setAttribute("id", "row" + i);
@@ -401,8 +401,10 @@ World.prototype.turn = function() {
 			};
 		});
 	});
-	drawMap(world1.map, "mapGrid");
+	drawMap(world1.map, "map1Grid");
 //	drawMapPhero(world1.map, "temp3");
+	readGameState();
+	timerChange();
 
 	document.getElementById("antCounter").innerHTML = "collected: " + world1.map[0][0].sand + "<br>ants: " + antCounter + "<br>sand/100turn: " + Math.floor(100*((world1.map[0][0].sand)+10*antCounter)/turnCounter);
 	turnCounter++;
@@ -431,30 +433,82 @@ butt.onclick = function() {
 };
 antButton.appendChild(butt);
 
+var leftButton = document.getElementById("leftButton");
+var butt = document.createElement("Button");
+butt.appendChild(document.createTextNode("Take a seat"));
+butt.onclick = function() {
+	if (gameState.player1Seat == false) {
+		changeGameState("player1Seat", true);
+		player = 1;
+	}
+	else {
+		changeGameState("player1Seat", false);
+		player = 0;
+	};
+};
+leftButton.appendChild(butt);
+
+var rightButton = document.getElementById("rightButton");
+var butt = document.createElement("Button");
+butt.appendChild(document.createTextNode("Take a seat"));
+butt.onclick = function() {
+	if (gameState.player2Seat == false) {
+		changeGameState("player2Seat", true);
+		player = 2;
+	}
+	else {
+		changeGameState("player2Seat", false);
+		player = 0;
+	};
+};
+rightButton.appendChild(butt);
+
+var timer = document.getElementById("timer");
+var timerText = document.createElement("p");
+timerText.setAttribute("id", "timerText")
+timer.appendChild(timerText);
+timerText.innerHTML = "Waiting";
+
+var timerChange = function() {
+	if (gameState.player1Seat == true && gameState.player2Seat == true) {
+		document.getElementById("timerText").innerHTML = "Go!";
+	}
+	else {
+		document.getElementById("timerText").innerHTML = "Waiting";	
+	}
+};
+
 var readGameState = function () {
-	var gameState;
 	var req = new XMLHttpRequest();
 	req.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			gameState = JSON.parse(this.responseText);
-			console.log(gameState.player1Ants);
-			return gameState;
+//			console.log(gameState);
+//			return JSON.parse(this.responseText);
 		};
 	};
 	req.open("GET", "gameState.json", true);
 	req.send();
 };
+var readGameStateSync = function() {
+	var req = new XMLHttpRequest();
+	req.open("GET", "gameState.json", false);
+	req.send();
+	return JSON.parse(req.responseText);
+};
+gameState = readGameStateSync();
 
 var changeGameState = function (attribute, value) {
-	var gameState;
+	var state;
 	var req = new XMLHttpRequest();
 	req.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			gameState = JSON.parse(this.responseText);
-			gameState.attribute = value;
+			state = JSON.parse(this.responseText);
+			state[attribute] = value;
+			console.log(state.player1Seat);
 			var sendReq = new XMLHttpRequest();
-			sendReq.open("POST", JSON.stringify(gameState), true);
-			sendReq.send();
+			sendReq.open("POST", "gameState.json", true);
+			sendReq.send(JSON.stringify(state));
 		};
 	};
 	req.open("GET", "gameState.json", true);

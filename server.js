@@ -12,12 +12,34 @@ var mimeType = {
 
 var server = http.createServer(function(request, response) {
 	var fileName;
-	fileName = url.parse(request.url);
-	fs.readFile("." + fileName.pathname, function(err, data) {
-		var ext  = path.parse(fileName.pathname).ext;
-		response.writeHead(200, {"Content-Type": mimeType[ext]});
-		response.write(data);
-		response.end();
-	});
+	fileName = url.parse(request.url).pathname;
+	if (request.method == "GET") {
+		fs.readFile("." + fileName, function(err, data) {
+			var ext  = path.parse(fileName).ext;
+			response.writeHead(200, {"Content-Type": mimeType[ext]});
+			response.write(data);
+			response.end();
+		});
+	}
+	else if (request.method == "POST") {
+		if (fileName == "/gameState.json") {
+		    var body = [];
+		    request.on('data', function(chunk) {
+		        body.push(chunk);
+		    });
+		    request.on('end', function() {
+		        body = Buffer.concat(body).toString();
+			    bodyObject = JSON.parse(body);
+
+			    fs.writeFile("." + fileName, body, function (err, file) {
+					if (err) throw err;
+				});
+	
+				var ext  = path.parse(fileName).ext;
+				response.writeHead(200, {"Content-Type": mimeType[ext]});
+				response.end();
+		    });
+		};
+	};
 });
 server.listen(8000);
