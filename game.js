@@ -404,9 +404,7 @@ World.prototype.turn = function() {
 	drawMap(world1.map, "map1Grid");
 //	drawMapPhero(world1.map, "temp3");
 
-	if (player > 0) {
-		changeGameState("player" + player + "Ants", antCounter);
-	};
+
 	document.getElementById("antCounter").innerHTML = "collected: " + world1.map[0][0].sand + "<br>ants: " + antCounter + "<br>sand/100turn: " + Math.floor(100*((world1.map[0][0].sand)+10*antCounter)/turnCounter);
 	turnCounter++;
 };
@@ -414,8 +412,12 @@ World.prototype.turn = function() {
 var clock = setInterval(function() {
 	readGameState();
 	timerChange();
+	buttonClickability();
 	if (gameState.player1Seat && gameState.player2Seat) {
 		world1.turn();
+	};
+	if (player > 0) {
+		changeGameState("player" + player + "Ants", antCounter);
 	};
 }, step);
 
@@ -475,6 +477,27 @@ butt.onclick = function() {
 	resetGame();
 };
 resetButton.appendChild(butt);
+
+var buttonClickability = function () {
+	if (player == 1 || !gameState.player1Seat) {
+		document.getElementById("leftButton").firstElementChild.disabled = false;
+	}
+	else {
+		document.getElementById("leftButton").firstElementChild.disabled = true;
+	};
+	if (player == 2 || !gameState.player2Seat) {
+		document.getElementById("rightButton").firstElementChild.disabled = false;
+	}
+	else {
+		document.getElementById("rightButton").firstElementChild.disabled = true;
+	};
+	if (player > 0) {
+		document.getElementById("antButton").firstElementChild.disabled = false;
+	}
+	else {
+		document.getElementById("antButton").firstElementChild.disabled = true;
+	};
+};
 
 var timer = document.getElementById("timer");
 var timerText = document.createElement("p");

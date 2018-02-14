@@ -7,7 +7,8 @@ var mimeType = {
     '.html': 'text/html',
     '.js': 'text/javascript',
     '.json': 'application/json',
-    '.css': 'text/css'
+    '.css': 'text/css',
+    '.ico': 'image/x-icon'
 };
 
 var resetGameState = function () {
@@ -21,7 +22,10 @@ var server = http.createServer(function(request, response) {
 	if (request.method == "GET") {
 		var ext  = path.parse(fileName).ext;
 		response.writeHead(200, {"Content-Type": mimeType[ext]});
-		if (fileName == "/gameStateOriginal.json") {
+		if (fileName == "/favicon.ico") {
+			response.end();
+		}
+		else if (fileName == "/gameStateOriginal.json") {
 			gameState = resetGameState();
 			response.write(JSON.stringify(gameState));
 			response.end();
